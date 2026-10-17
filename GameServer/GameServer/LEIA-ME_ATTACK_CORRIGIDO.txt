@@ -1,0 +1,56 @@
+MU NaVeia - /attack com selecao de skill
+===========================================
+
+ALTERACOES FEITAS
+- CustomAttack.cpp
+- CustomAttack.h
+- LuaUser.cpp
+- Protocol.cpp
+
+COMO USAR
+/attack ID
+Exemplo:
+/attack 9
+
+Para desligar:
+/attack off
+
+Sem informar ID:
+/attack
+mantem o comportamento original do servidor e escolhe a skill padrao da classe.
+
+SKILLS SUPORTADAS PELO CUSTOM ATTACK ATUAL
+9   = Evil Spirit
+14  = Inferno
+39  = Ice Storm
+41  = Twisting Slash
+56  = Power Slash
+60  = Force
+61  = Fire Burst
+215 = Chain Lightning
+230 = Red Storm
+235 = Five Shot
+236 = Sword Slash
+237 = Lightning Storm
+238 = Birds
+260 = Large Ring Blower
+264 = Dragon Lore
+270 = Phoenix Shot
+
+IMPORTANTE
+1. O personagem precisa ter aprendido a skill escolhida.
+2. O /attack agora e processado NATIVAMENTE antes do ChatProc do Lua.
+   Isso impede que o Lua antigo do /attack intercepte o comando e provoque
+   estado incompleto/instavel.
+3. Outros comandos Lua continuam passando normalmente pelo ChatProc.
+4. Compile novamente o GameServer depois de substituir a source.
+5. O Main/cliente nao precisa ser recompilado para esta alteracao.
+6. Nao e necessario usar o AttackCustom_MultiSkill_V3_DEBUG.lua para /attack.
+
+LUA
+As funcoes Lua continuam disponiveis para outros scripts:
+player:startCustomAttackSkill(ID)
+player:stopCustomAttack()
+player:hasCustomAttackSkill(ID)
+
+O startCustomAttackSkill agora usa a mesma rotina central do CustomAttack.cpp.

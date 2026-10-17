@@ -1,0 +1,73 @@
+﻿# Visual Studio / IDE
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.pdb
+*.ipch/
+*.aps
+*.ncb
+*.obj/
+*.pch
+*.idb
+*.tlog/
+*.log
+*.tmp
+*.cache
+*.ilk
+*.exp
+*.lib
+*.pch
+*.opensdf
+*.sdf
+*.dbmdl
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Build output
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+Out/
+build/
+obj/
+
+# Generated files
+*.generated.*
+*.gch
+*.gcda
+*.gcno
+*.dll
+*.exe
+*.manifest
+*.res
+*.pch
+
+# OS / tooling
+Thumbs.db
+Desktop.ini
+
+# ReSharper / Rider
+*.DotSettings.user
+.idea/
+
+# NuGet / package cache
+packages/
+*.nupkg
+
+# Local logs and scratch
+*.log
+*.tmp
+*.bak
+*.orig
+
+*.zip
+*.7z
+

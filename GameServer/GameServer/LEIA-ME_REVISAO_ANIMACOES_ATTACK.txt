@@ -1,0 +1,57 @@
+MU NaVeia - Revisao das animacoes do /attack
+==============================================
+
+Foi feita uma revisao estatica do fluxo das skills no GameServer.
+
+O que a source faz agora:
+
+1) Skills enviadas por SendDurationSkillAttack
+   - O proprio SkillManager envia GCDurationSkillAttackSend (0x1E)
+     antes de executar RunningSkill.
+   - Portanto ja possuem caminho de animacao gerado pelo servidor.
+
+2) Skills MultiSkill
+   - O CustomAttack chama SendDurationSkillAttack antes do multi-packet.
+   - Isso fornece o pacote visual/direcional.
+   - Triple Shot recebeu tratamento especial adicional com GCSkillAttackSend
+     porque no /attack as flechas/dano apareciam sem a animacao da Elf.
+
+3) Skills simples via SendSkillAttack
+   - Varias caem em BasicSkillAttack ou em rotinas que aplicam dano mas nao
+     enviam um pacote visual proprio.
+   - Para essas, SendSkillAttack agora envia GCSkillAttackSend (0x19)
+     ANTES de processar o ataque.
+   - Skills que ja enviam o proprio pacote no SkillManager foram deixadas
+     sem esse envio extra para evitar animacao duplicada.
+
+Skills que receberam garantia extra de pacote visual 0x19:
+- Poison
+- Meteorite
+- Lightning
+- Fire Ball
+- Ice
+- Power Wave
+- Energy Ball
+- Falling Slash
+- Lunge
+- Uppercut
+- Cyclone
+- Slash
+- Fire Breath
+- Ice Arrow
+- Force Wave
+- Drain Life
+- Electric Surge
+- Large Ring Blower
+- Phoenix Shot
+
+Tratamento especial mantido:
+- Triple Shot
+
+IMPORTANTE
+Esta revisao cobre o lado GameServer. O cliente/Main continua sendo quem
+interpreta os pacotes 0x19/0x1E e escolhe a animacao/modelo. Se alguma skill
+especifica ainda ficar visualmente parada mesmo recebendo o pacote correto,
+a correcao restante sera no Main/cliente.
+
+Compile novamente o GameServer e teste /attack list + as skills desejadas.

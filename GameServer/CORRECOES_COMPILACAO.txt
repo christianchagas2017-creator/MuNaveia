@@ -1,0 +1,13 @@
+Correcoes aplicadas para compilacao:
+
+1. Mantidas as configuracoes reais: Debug, VoxMu e VoxMu_CS.
+2. Removida a configuracao fantasma VoxDebug, que apenas apontava para VoxMu.
+3. Removidos caminhos absolutos C:\PROJETOS\... das dependencias LuaJIT.
+4. Includes agora usam $(SolutionDir)Dependencies\include e \luajit.
+5. Corrigido include invalido ItemManager.h. -> ItemManager.h.
+6. SkillManager nao depende mais da pasta Util ausente; Math.h/Math.cpp locais foram adicionados.
+7. Entradas CCRC32 antigas foram removidas do projeto, pois nao ha uso de CCRC32 na source atual.
+8. A pasta .vs foi removida para o Visual Studio recriar o cache e exibir corretamente VoxMu.
+
+Abra GameServer.sln, selecione VoxMu | Win32 e use Rebuild Solution.
+Para Castle Siege use VoxMu_CS | Win32.

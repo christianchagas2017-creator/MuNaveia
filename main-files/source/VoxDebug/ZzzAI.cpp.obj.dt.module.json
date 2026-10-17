@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "C:\\Users\\ChristianCh\\Desktop\\source NaveiaTeste\\main-files\\source\\VoxDebug\\ZzzAI.obj",
+            "outputs": [
+                "C:\\Users\\ChristianCh\\Desktop\\source NaveiaTeste\\main-files\\source\\VoxDebug\\ZzzAI.cpp.obj.dt.module.json",
+                "C:\\Users\\ChristianCh\\Desktop\\source NaveiaTeste\\main-files\\source\\VoxDebug\\ZzzAI.cpp.obj.dt.d.json",
+                "C:\\Users\\ChristianCh\\Desktop\\source NaveiaTeste\\main-files\\source\\VoxDebug\\Main.pch"
+            ],
+            "requires": []
+        }
+    ]
+}

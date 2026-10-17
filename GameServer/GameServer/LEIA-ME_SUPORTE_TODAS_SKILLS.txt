@@ -1,0 +1,14 @@
+MU NaVeia - /attack suporte ampliado
+======================================
+Source base: GameServer2_ATTACK_CORRIGIDO(1).zip
+
+Skills da lista encontradas em SkillManager.h: 57
+Não encontradas: nenhuma
+
+Alterado:
+- CustomAttack.cpp / IsSupportedAttackSkill()
+- CustomAttack.cpp / switch de OnAttackMonsterAndMsgProc()
+
+Compile novamente o GameServer.
+Mantenha o CustomAttack habilitado.
+Use a Lua AttackCustom_TODAS_SKILLS.lua da pasta _LUA_PRONTO.

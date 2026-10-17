@@ -1,0 +1,22 @@
+MU NaVeia - correção visual Triple Shot no /attack
+====================================================
+
+Alterado:
+- CustomAttack.cpp
+- Tratamento específico do SKILL_TRIPLE_SHOT dentro de OnAttackMonsterAndMsgProc().
+
+O que foi feito:
+Antes de processar o MultiSkill da Triple Shot, o GameServer agora envia
+GCSkillAttackSend() apenas como pacote visual para forçar a animação de disparo
+da Elf no cliente. O dano continua sendo processado pela rotina MultiSkill.
+
+Isso não altera a lógica das outras skills.
+
+Teste recomendado:
+1. Compile o GameServer.
+2. Entre com uma Elf com bow/crossbow e Triple Shot aprendida.
+3. Use /attack 24.
+4. Verifique a própria tela e também a visão de outro personagem próximo.
+
+Se as flechas/dano funcionarem mas a animação ainda não tocar, o próximo ajuste
+deve ser feito no Main/cliente, na rotina que trata o pacote 0x19/skill 24.
