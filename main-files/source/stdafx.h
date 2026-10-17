@@ -88,6 +88,9 @@
 #include <mmsystem.h>
 #include <shellapi.h>
 
+// Camada multiplataforma (Android/iOS/Linux). No Windows nao faz nada.
+#include "Platform/PlatformCompat.h"
+
 //c runtime
 #include <stdio.h>
 #include <stdlib.h>
