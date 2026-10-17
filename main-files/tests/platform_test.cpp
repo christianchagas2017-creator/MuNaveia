@@ -61,6 +61,78 @@ int main()
 	CHECK(slurp(fopen((tmp / "Data" / "Custom" / "Interface" / "Hud.OZJ").string().c_str(), "rb")) == "abc");
 	fs::remove_all(tmp);
 
+
+	// ---- Sockets: WSAAsyncSelect emulado com poll() ----
+	{
+		using Platform::SocketEvent;
+		WSADATA wsa;
+		CHECK(WSAStartup(MAKEWORD(2, 2), &wsa) == 0);
+
+		int ls = ::socket(AF_INET, SOCK_STREAM, 0);
+		sockaddr_in sa{}; sa.sin_family = AF_INET; sa.sin_addr.s_addr = htonl(INADDR_LOOPBACK); sa.sin_port = 0;
+		CHECK(::bind(ls, (sockaddr*)&sa, sizeof sa) == 0);
+		socklen_t sl = sizeof sa; ::getsockname(ls, (sockaddr*)&sa, &sl);
+		CHECK(::listen(ls, 1) == 0);
+
+		// mesma ordem do CWsctlc::Connect: connect() bloqueante e depois WSAAsyncSelect
+		SOCKET c = socket(PF_INET, SOCK_STREAM, 0);
+		CHECK(c != INVALID_SOCKET);
+		CHECK(connect(c, (LPSOCKADDR)&sa, sizeof sa) == 0);
+		int srv = ::accept(ls, nullptr, nullptr);
+		CHECK(srv >= 0);
+
+		const unsigned MSG = 0x400; // WM_USER+0
+		CHECK(WSAAsyncSelect(c, nullptr, MSG, FD_READ | FD_WRITE | FD_CLOSE) == 0);
+
+		auto wait = [&](SocketEvent* ev, int max) { for (int i = 0; i < 100; ++i) { int n = Platform::PollSocketEvents(ev, max); if (n) return n; Sleep(10); } return 0; };
+		SocketEvent ev[8];
+
+		// 1) Windows envia um FD_WRITE logo apos o registro
+		int n = Platform::PollSocketEvents(ev, 8);
+		CHECK(n == 1 && ev[0].socket == c && ev[0].msg == MSG && ev[0].event == FD_WRITE);
+		CHECK(Platform::PollSocketEvents(ev, 8) == 0); // e nada mais enquanto ocioso
+
+		// 2) dados chegando -> FD_READ; recv() consome; some o evento
+		CHECK(::send(srv, "hello", 5, 0) == 5);
+		n = wait(ev, 8);
+		CHECK(n == 1 && ev[0].event == FD_READ && ev[0].msg == MSG);
+		char buf[16] = {};
+		CHECK(recv(c, buf, sizeof buf, 0) == 5 && std::string(buf, 5) == "hello");
+		CHECK(Platform::PollSocketEvents(ev, 8) == 0);
+
+		// 3) recv() sem dados -> WSAEWOULDBLOCK; avisa FD_WRITE quando o envio liberar
+		CHECK(recv(c, buf, sizeof buf, 0) == SOCKET_ERROR);
+		CHECK(WSAGetLastError() == WSAEWOULDBLOCK);
+		n = wait(ev, 8);
+		CHECK(n == 1 && ev[0].event == FD_WRITE);
+
+		// 4) EINPROGRESS (connect nao bloqueante no POSIX) tem que virar WSAEWOULDBLOCK
+		errno = EINPROGRESS;
+		CHECK(WSAGetLastError() == WSAEWOULDBLOCK);
+		errno = ECONNRESET;
+		CHECK(WSAGetLastError() == WSAECONNRESET);
+		Platform::PollSocketEvents(ev, 8); // limpa o writeBlocked deixado pelos testes acima
+
+		// 5) outro lado envia e fecha: FD_READ primeiro, FD_CLOSE so depois de drenar, uma unica vez
+		CHECK(::send(srv, "bye", 3, 0) == 3);
+		::close(srv);
+		n = wait(ev, 8);
+		CHECK(n >= 1 && ev[0].event == FD_READ);
+		CHECK(recv(c, buf, sizeof buf, 0) == 3 && std::string(buf, 3) == "bye");
+		n = wait(ev, 8);
+		bool closed = false; for (int i = 0; i < n; ++i) if (ev[i].event == FD_CLOSE) closed = true;
+		CHECK(closed);
+		Sleep(30);
+		n = Platform::PollSocketEvents(ev, 8);
+		for (int i = 0; i < n; ++i) CHECK(ev[i].event != FD_CLOSE); // nao repete
+
+		// 6) closesocket() tira o socket do registro
+		CHECK(closesocket(c) == 0);
+		CHECK(Platform::PollSocketEvents(ev, 8) == 0);
+		::close(ls);
+		WSACleanup();
+	}
+
 	if (fails == 0) std::printf("OK: camada Platform passou em todos os testes.\n");
 	return fails ? 1 : 0;
 #endif

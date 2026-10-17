@@ -15,9 +15,18 @@
 
 #ifndef _PLATFORM_COMPAT_BASIC_TYPES
 #define _PLATFORM_COMPAT_BASIC_TYPES
+typedef uint8_t  BYTE;
+typedef uint16_t WORD;
 typedef uint32_t DWORD;
 typedef int32_t  BOOL;
 typedef long long LONGLONG;
+#include <string.h>
+#ifndef ZeroMemory
+#define ZeroMemory(p, n) memset((p), 0, (n))
+#endif
+#ifndef CopyMemory
+#define CopyMemory(d, s, n) memcpy((d), (s), (n))
+#endif
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -64,5 +73,8 @@ inline BOOL QueryPerformanceCounter(LARGE_INTEGER* c)   { c->QuadPart = (LONGLON
 #include <cstdio>
 #include "PlatformFile.h"
 #define fopen(path, mode) ::Platform::FOpen((path), (mode))
+
+// ---- Rede (Winsock -> BSD sockets + poll) ----
+#include "PlatformSocket.h"
 
 #endif // !_WIN32

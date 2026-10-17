@@ -225,8 +225,8 @@ int CWsctlc::Connect(char *ip_addr, unsigned short port, DWORD WinMsgNum)
 		CopyMemory(&addr.sin_addr, host->h_addr_list[0], host->h_length);
 	}
    
-	if ( addr.sin_addr.S_un.S_un_b.s_b1 == 127 && addr.sin_addr.S_un.S_un_b.s_b2 == 0 &&
-		addr.sin_addr.S_un.S_un_b.s_b3 == 0 && addr.sin_addr.S_un.S_un_b.s_b4 == 1)
+	// 127.0.0.1 (mesmo teste de S_un_b.s_b1..s_b4, mas portavel)
+	if ( ntohl(addr.sin_addr.s_addr) == 0x7F000001UL )
 	{	// local host
 		return ( FALSE);
 	}
