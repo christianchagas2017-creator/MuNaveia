@@ -1,7 +1,7 @@
 #pragma once
 
-#include "protocol.h"
-#include "user.h"
+#include "Protocol.h"
+#include "User.h"
 
 #define MAX_DEATH_DESCRIPTIONS 200
 

@@ -12,9 +12,9 @@ licensed under MIT License.
 
 extern "C"
 {
-#include <luajit\lua.h>
-#include <luajit\lualib.h>
-#include <luajit\lauxlib.h>
+#include <luajit/lua.h>
+#include <luajit/lualib.h>
+#include <luajit/lauxlib.h>
 }
 
 #if !defined LUA_VERSION_NUM || LUA_VERSION_NUM <= 501
@@ -200,7 +200,7 @@ namespace LUAAA_NS
 		{
 			if (lua_isnumber(L, idx) || lua_isstring(L, idx))
 			{
-				return unsigned long(lua_tointeger(L, idx));
+				return (unsigned long)(lua_tointeger(L, idx));
 			}
 			else
 			{
@@ -222,7 +222,7 @@ namespace LUAAA_NS
 		{
 			if (lua_isnumber(L, (int)idx) || lua_isstring(L, (int)idx))
 			{
-				return long long(lua_tointeger(L, (int)idx));
+				return (long long)(lua_tointeger(L, (int)idx));
 			}
 			else
 			{
@@ -266,7 +266,7 @@ namespace LUAAA_NS
 		{
 			if (lua_isnumber(L, idx) || lua_isstring(L, idx))
 			{
-				return unsigned short(lua_tointeger(L, idx));
+				return static_cast<unsigned short>(lua_tointeger(L, idx));
 			}
 			else
 			{

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LuaInventory.h"
 #include "LuaStack.hpp"
 #include "User.h"

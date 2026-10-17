@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "PatenteInfo.h"
 #include "MemScript.h"
 #include "Util.h"

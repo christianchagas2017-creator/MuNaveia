@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LuaFunctions.h"
 #include "LuaStack.hpp"
 #include "NpcTalk.h"

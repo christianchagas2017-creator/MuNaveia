@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LuaGameServer.h"
 #include "GameMain.h"
 #include "Util.h"

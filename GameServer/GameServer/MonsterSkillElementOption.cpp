@@ -233,21 +233,21 @@ void CMonsterSkillElementOption::CycleAutoAG(LPOBJ lpObj) // OK
 
 void CMonsterSkillElementOption::CheckSkillElementOptionProc(LPOBJ lpObj) // OK
 {
-	((lpObj->MonsterSkillElementOption.CheckDefenseTime()==0)?0:((lpObj->MonsterSkillElementOption.DecDefenseTime()==0)?0:lpObj->MonsterSkillElementOption.ResetDefense()));
+	if(lpObj->MonsterSkillElementOption.CheckDefenseTime()!=0 && lpObj->MonsterSkillElementOption.DecDefenseTime()!=0){lpObj->MonsterSkillElementOption.ResetDefense();}
 
-	((lpObj->MonsterSkillElementOption.CheckAttackTime()==0)?0:((lpObj->MonsterSkillElementOption.DecAttackTime()==0)?0:lpObj->MonsterSkillElementOption.ResetAttack()));
+	if(lpObj->MonsterSkillElementOption.CheckAttackTime()!=0 && lpObj->MonsterSkillElementOption.DecAttackTime()!=0){lpObj->MonsterSkillElementOption.ResetAttack();}
 
-	((lpObj->MonsterSkillElementOption.CheckAutoHPTime()==0)?0:((lpObj->MonsterSkillElementOption.DecAutoHPTime()==0)?lpObj->MonsterSkillElementOption.CycleAutoHP(lpObj):lpObj->MonsterSkillElementOption.ResetAutoHP()));
+	if(lpObj->MonsterSkillElementOption.CheckAutoHPTime()!=0){if(lpObj->MonsterSkillElementOption.DecAutoHPTime()==0){lpObj->MonsterSkillElementOption.CycleAutoHP(lpObj);}else{lpObj->MonsterSkillElementOption.ResetAutoHP();}}
 
-	((lpObj->MonsterSkillElementOption.CheckAutoMPTime()==0)?0:((lpObj->MonsterSkillElementOption.DecAutoMPTime()==0)?lpObj->MonsterSkillElementOption.CycleAutoMP(lpObj):lpObj->MonsterSkillElementOption.ResetAutoMP()));
+	if(lpObj->MonsterSkillElementOption.CheckAutoMPTime()!=0){if(lpObj->MonsterSkillElementOption.DecAutoMPTime()==0){lpObj->MonsterSkillElementOption.CycleAutoMP(lpObj);}else{lpObj->MonsterSkillElementOption.ResetAutoMP();}}
 
-	((lpObj->MonsterSkillElementOption.CheckAutoAGTime()==0)?0:((lpObj->MonsterSkillElementOption.DecAutoAGTime()==0)?lpObj->MonsterSkillElementOption.CycleAutoAG(lpObj):lpObj->MonsterSkillElementOption.ResetAutoAG()));
+	if(lpObj->MonsterSkillElementOption.CheckAutoAGTime()!=0){if(lpObj->MonsterSkillElementOption.DecAutoAGTime()==0){lpObj->MonsterSkillElementOption.CycleAutoAG(lpObj);}else{lpObj->MonsterSkillElementOption.ResetAutoAG();}}
 
-	((lpObj->MonsterSkillElementOption.CheckImmuneTime()==0)?0:((lpObj->MonsterSkillElementOption.DecImmuneTime()==0)?0:lpObj->MonsterSkillElementOption.ResetImmune()));
+	if(lpObj->MonsterSkillElementOption.CheckImmuneTime()!=0 && lpObj->MonsterSkillElementOption.DecImmuneTime()!=0){lpObj->MonsterSkillElementOption.ResetImmune();}
 
-	((lpObj->MonsterSkillElementOption.CheckResistTime()==0)?0:((lpObj->MonsterSkillElementOption.DecResistTime()==0)?0:lpObj->MonsterSkillElementOption.ResetResist()));
+	if(lpObj->MonsterSkillElementOption.CheckResistTime()!=0 && lpObj->MonsterSkillElementOption.DecResistTime()!=0){lpObj->MonsterSkillElementOption.ResetResist();}
 
-	((lpObj->MonsterSkillElementOption.CheckModifyStatTime()==0)?0:((lpObj->MonsterSkillElementOption.DecModifyStatTime()==0)?0:lpObj->MonsterSkillElementOption.ResetModifyStat()));
+	if(lpObj->MonsterSkillElementOption.CheckModifyStatTime()!=0 && lpObj->MonsterSkillElementOption.DecModifyStatTime()!=0){lpObj->MonsterSkillElementOption.ResetModifyStat();}
 
-	((lpObj->MonsterSkillElementOption.CheckBerserkTime()==0)?0:((lpObj->MonsterSkillElementOption.DecBerserkTime()==0)?0:lpObj->MonsterSkillElementOption.ResetBerserk()));
+	if(lpObj->MonsterSkillElementOption.CheckBerserkTime()!=0 && lpObj->MonsterSkillElementOption.DecBerserkTime()!=0){lpObj->MonsterSkillElementOption.ResetBerserk();}
 }

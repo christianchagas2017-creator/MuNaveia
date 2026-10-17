@@ -2314,15 +2314,13 @@ void gObjMonsterMoveAction(LPOBJ lpObj)
 
 	while ( searchc-- != 0 )
 	{
-		__try
+		if(maxmoverange <= 0)
 		{
-			tpx = (lpObj->X - lpObj->MoveRange) + (BYTE)(GetLargeRand()%maxmoverange);
-			tpy = (lpObj->Y - lpObj->MoveRange) + (BYTE)(GetLargeRand()%maxmoverange);
+			maxmoverange = 1; // equivale ao antigo __except(maxmoverange=1,1): evita divisao por zero
 		}
-		__except(maxmoverange=1, 1)
-		{
 
-		}
+		tpx = (lpObj->X - lpObj->MoveRange) + (BYTE)(GetLargeRand()%maxmoverange);
+		tpy = (lpObj->Y - lpObj->MoveRange) + (BYTE)(GetLargeRand()%maxmoverange);
 
 		int mchk = gObjMonsterMoveCheck(lpObj, tpx, tpy);
 		BYTE attr = gMap[lpObj->Map].GetAttr(tpx, tpy);

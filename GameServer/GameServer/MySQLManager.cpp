@@ -69,7 +69,7 @@ std::unique_ptr<sql::ResultSet> CMySQL::executeQuery(const std::string& query) {
     }
     catch (const std::exception& e) {
         LogAdd(LOG_RED, "Connection failed: %s", e.what());
-        return false;
+        return nullptr;
     }
 
     sql::Statement* stmt = connection->createStatement();

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include "LuaWareHouse.h"
+#include "stdafx.h"
+#include "LuaWarehouse.h"
 #include "LuaStack.hpp"
 #include "User.h"
 

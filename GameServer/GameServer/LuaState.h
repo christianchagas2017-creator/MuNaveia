@@ -11,8 +11,8 @@
 //Lua Debugs End
 
 extern "C" {
-#include <luajit\lua.hpp>
-#include <luajit\luajit.h>
+#include <luajit/lua.hpp>
+#include <luajit/luajit.h>
 };
 
 class LuaState 

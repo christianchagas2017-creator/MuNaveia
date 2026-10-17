@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LuaSocket.h"
 #include "Protocol.h"
 #include "Util.h"

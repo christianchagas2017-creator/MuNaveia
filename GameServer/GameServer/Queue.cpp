@@ -23,7 +23,7 @@ void CQueue::ClearQueue() // OK
 {
 	this->m_critical.lock();
 
-	this->m_QueueInfo.swap(std::queue<QUEUE_INFO>());
+	std::queue<QUEUE_INFO>().swap(this->m_QueueInfo);
 
 	this->m_critical.unlock();
 }

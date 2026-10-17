@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Util.h"
-#include "user.h"
+#include "User.h"
 #include "DSProtocol.h"
 #include "ObjectManager.h"
 #include "Monster.h"
