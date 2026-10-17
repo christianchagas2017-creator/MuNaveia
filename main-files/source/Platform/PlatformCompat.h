@@ -57,4 +57,12 @@ inline void Sleep(DWORD ms) { std::this_thread::sleep_for(std::chrono::milliseco
 inline BOOL QueryPerformanceFrequency(LARGE_INTEGER* f) { f->QuadPart = 1000000000LL; return TRUE; }
 inline BOOL QueryPerformanceCounter(LARGE_INTEGER* c)   { c->QuadPart = (LONGLONG)Platform::NowNs(); return TRUE; }
 
+// ---- Arquivos ----
+// Todo fopen() do cliente passa a aceitar caminhos no estilo Windows e ignorar
+// maiusculas/minusculas. <cstdio> precisa vir antes (std::fopen e chamado com
+// parenteses dentro de PlatformFile.h para nao ser capturado pelo macro).
+#include <cstdio>
+#include "PlatformFile.h"
+#define fopen(path, mode) ::Platform::FOpen((path), (mode))
+
 #endif // !_WIN32
