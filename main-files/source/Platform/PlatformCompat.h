@@ -77,4 +77,7 @@ inline BOOL QueryPerformanceCounter(LARGE_INTEGER* c)   { c->QuadPart = (LONGLON
 // ---- Rede (Winsock -> BSD sockets + poll) ----
 #include "PlatformSocket.h"
 
+// ---- Entrada (GetAsyncKeyState, GetCursorPos, VK_*) ----
+#include "PlatformInput.h"
+
 #endif // !_WIN32

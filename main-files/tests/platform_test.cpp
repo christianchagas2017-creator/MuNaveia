@@ -133,6 +133,118 @@ int main()
 		WSACleanup();
 	}
 
+
+	// ---- Entrada: GetAsyncKeyState / cursor / toque ----
+	{
+		namespace In = Platform::Input;
+		CHECK(VK_LBUTTON == 0x01 && VK_ESCAPE == 0x1B && VK_F1 == 0x70 && VK_OEM_3 == 0xC0 && VK_NUMPAD0 == 0x60);
+
+		// padrao exato usado no jogo: HIBYTE(GetAsyncKeyState(VK_X)) == 128
+		In::SetKey(VK_CONTROL, true);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_CONTROL)) == 128);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_CONTROL)) & 0x80);
+		In::EndFrame();
+		In::SetKey(VK_CONTROL, false);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_CONTROL)) == 0);
+
+		// Shift generico = esquerdo OU direito
+		In::SetKey(VK_RSHIFT, true);  In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_SHIFT)) == 128);
+		In::SetKey(VK_LSHIFT, true);  In::EndFrame();
+		In::SetKey(VK_RSHIFT, false); In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_SHIFT)) == 128);   // esquerdo ainda apertado
+		In::SetKey(VK_LSHIFT, false); In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_SHIFT)) == 0);
+
+		// CapsLock alterna o bit baixo de GetKeyState
+		In::SetKey(VK_CAPITAL, true);  In::EndFrame(); In::SetKey(VK_CAPITAL, false); In::EndFrame();
+		CHECK((GetKeyState(VK_CAPITAL) & 1) == 1);
+		In::SetKey(VK_CAPITAL, true);  In::EndFrame(); In::SetKey(VK_CAPITAL, false); In::EndFrame();
+		CHECK((GetKeyState(VK_CAPITAL) & 1) == 0);
+
+		// cursor
+		POINT pt{};
+		In::SetPointer(100, 200);
+		CHECK(GetCursorPos(&pt) && pt.x == 100 && pt.y == 200);
+		CHECK(ScreenToClient(nullptr, &pt) && pt.x == 100 && pt.y == 200);
+		CHECK(GetDoubleClickTime() == 500);
+
+		// clique rapido: apertar e soltar no MESMO quadro nao pode sumir
+		In::SetKey(VK_RETURN, true);
+		In::SetKey(VK_RETURN, false);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RETURN)) == 128);   // o jogo ainda enxerga neste quadro
+		In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RETURN)) == 0);     // e solta no proximo
+		// ja visto num quadro anterior: soltar e imediato
+		In::SetKey(VK_TAB, true);  In::EndFrame();
+		In::SetKey(VK_TAB, false);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_TAB)) == 0);
+
+		// roda do mouse acumula e zera
+		In::AddWheel(120); In::AddWheel(120); In::AddWheel(-120);
+		CHECK(In::TakeWheel() == 120 && In::TakeWheel() == 0);
+
+		// ---- toque simples = clique esquerdo na posicao do dedo ----
+		uint64_t t = 1000;
+		In::TouchDown(1, 50, 60, t);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 128);
+		GetCursorPos(&pt); CHECK(pt.x == 50 && pt.y == 60);
+		In::EndFrame();
+		In::TouchUp(1, 50, 60);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 0);
+
+		// ---- toque rapido (down+up no mesmo quadro) ainda gera um clique visivel ----
+		In::TouchDown(1, 10, 10, t);
+		In::TouchUp(1, 10, 10);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 128);
+		In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 0);
+
+		// ---- toque longo parado = clique direito ----
+		In::TouchDown(2, 300, 300, t);
+		In::EndFrame();
+		In::UpdateTouch(t + 300);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 128 && HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 0);
+		In::UpdateTouch(t + 500);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 128);
+		In::EndFrame();
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 0);
+		In::TouchUp(2, 300, 300);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 0);
+
+		// ---- arrastar cancela o toque longo ----
+		In::TouchDown(3, 100, 100, t);
+		In::EndFrame();
+		In::TouchMove(3, 160, 100);
+		In::UpdateTouch(t + 2000);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 0 && HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 128);
+		GetCursorPos(&pt); CHECK(pt.x == 160 && pt.y == 100);
+		In::TouchUp(3, 160, 100);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 0);
+
+		// ---- tremida pequena (dentro do limite) NAO cancela o toque longo ----
+		In::TouchDown(4, 100, 100, t);
+		In::EndFrame();
+		In::TouchMove(4, 105, 103);
+		In::UpdateTouch(t + 600);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 128);
+		In::EndFrame();
+		In::TouchUp(4, 105, 103);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_RBUTTON)) == 0);
+
+		// ---- segundo dedo e ignorado ----
+		In::TouchDown(5, 20, 20, t);
+		In::TouchDown(6, 400, 400, t);
+		GetCursorPos(&pt); CHECK(pt.x == 20 && pt.y == 20);
+		In::TouchMove(6, 450, 450);
+		GetCursorPos(&pt); CHECK(pt.x == 20 && pt.y == 20);
+		In::TouchUp(6, 450, 450);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 128);  // o dedo 5 continua apertando
+		In::EndFrame();
+		In::TouchUp(5, 20, 20);
+		CHECK(HIBYTE(GetAsyncKeyState(VK_LBUTTON)) == 0);
+	}
+
 	if (fails == 0) std::printf("OK: camada Platform passou em todos os testes.\n");
 	return fails ? 1 : 0;
 #endif
