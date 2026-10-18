@@ -213,6 +213,20 @@ namespace Platform
 			int w = s.wheel; s.wheel = 0; return w;
 		}
 
+		// Solta tudo (perda de foco, app indo para segundo plano) para nao deixar tecla "presa".
+		inline void ReleaseAll()
+		{
+			auto& s = detail::S(); std::lock_guard<std::mutex> l(s.mtx);
+			for (int i = 0; i < 256; ++i)
+			{
+				s.keys[i].down = false;
+				s.keys[i].pressedThisFrame = false;
+				s.keys[i].releasePending = false;
+			}
+			s.touchId = -1; s.touchButton = 0;
+			s.touchMoved = false; s.touchLongPressed = false;
+		}
+
 		// Chamar UMA vez por quadro, depois de atualizar o jogo.
 		inline void EndFrame()
 		{
